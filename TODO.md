@@ -1,0 +1,4 @@
+- add trends scraper
+- add data to Firebase
+- use an algorithm to determine good meme
+- add UI
