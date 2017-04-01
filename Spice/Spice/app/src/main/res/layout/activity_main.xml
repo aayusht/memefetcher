@@ -31,13 +31,14 @@
             android:maxLines="1"
             android:minLines="1"
             android:text="NASDANQ UP 10 POINTS ALSO UR MOM HAHAHAHAHAHAHAHA"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textSize="24sp" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textStyle="italic" />
 
         </android.support.v7.widget.Toolbar>
 
     <Button
         android:id="@+id/button2"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -53,6 +54,7 @@
 
     <Button
         android:id="@+id/button1"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -69,6 +71,7 @@
 
     <Button
         android:id="@+id/button3"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -130,7 +133,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="18dp"
-        android:text="TextView"
+        android:text="The Spiciest Memes"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         app:layout_constraintLeft_toLeftOf="@+id/graph"
         app:layout_constraintTop_toBottomOf="@+id/graph" />
