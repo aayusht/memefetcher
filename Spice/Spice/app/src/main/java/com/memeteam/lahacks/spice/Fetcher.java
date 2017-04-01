@@ -1,4 +1,9 @@
 package com.memeteam.lahacks.spice;
+import android.util.Log;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -69,19 +74,31 @@ public class Fetcher {
         return result;
     }
 
-    public static void sendData(List<String> names) throws IOException {
+    private static void sendData(List<String> names, DatabaseReference root) throws IOException {
         if (names.size() > 4) {
-            sendData(names.subList(0,4));
+            sendData(names.subList(0,4), root);
             names = names.subList(4,names.size());
         }
         Document document = Jsoup.connect(getDataUrl(names,FIVEYEARS)).get();
+        Log.d("Error",getDataUrl(names,FIVEYEARS));
         Elements tableElements = document.select("table");
 
         Elements headerElems = tableElements.select("thead tr th");
-        for (int i = 0; i < headerElems.size(); i++) {
+        Elements rowElems = tableElements.select("tbody tr");
+        for (int i = 1; i < headerElems.size(); i++) {
             String head = headerElems.get(i).text();
-            Elements rowElems = tableElements.select(":not(thead) tr");
+            for (Element r: rowElems) {
+                root.child(head).child(r.select("td").get(0).text()).setValue(r.select("td").get(i));
+            }
         }
+    }
+    public static void sendData(List<String> names) throws IOException {
+        sendData(names, FirebaseDatabase.getInstance().getReference());
+    }
+    public static void sendData(String name) throws IOException {
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add(name);
+        sendData(temp);
     }
 
     private static String getDataUrl(List<String> names, int duration) {
@@ -98,16 +115,14 @@ public class Fetcher {
         return MEMES + "/page/" + page;
     }
 
-    public static void main(String[] args) {
+    public static void onCreate() {
         try {
             List<Meme> memes = new ArrayList<>();
             for (int i = 0; i < PAGE_COUNT; i++) {
                 memes.addAll(getMemes(getUrl(i)));
                 memes.addAll(getMemes(getUrl(i) + SUBMISSIONS_MODIFIER));
             }
-            for (Meme meme : memes) {
-                System.out.println(meme);
-            }
+            sendData(memes.get(0).toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

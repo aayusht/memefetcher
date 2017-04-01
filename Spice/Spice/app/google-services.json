@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "618935631733-0i9p4r8ctobqn5sjcg6p3nrstjl5s918.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.memeteam.lahacks.spice",
+            "certificate_hash": "fc5fa13232f9a1257f7d54eaba2e3e13bb0fd2e3"
+          }
+        },
+        {
           "client_id": "618935631733-1fhkr3agv3aloajvsfod3pi09uacitqv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
