@@ -1,0 +1,91 @@
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by hp on 4/1/2017.
+ */
+public class Fetcher {
+    private static final String MEMES = "http://knowyourmeme.com/categories/meme";
+    private static final String SUBMISSIONS_MODIFIER = "?status=submissions";
+    private static final int PAGE_COUNT = 5;
+
+    private static String getStringFromUrl(String urlString) throws Exception{
+        URL url = new URL(urlString);
+        URLConnection yc = url.openConnection();
+        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream(), "UTF-8"));
+        String inputLine;
+        StringBuilder a = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) { a.append(inputLine); }
+        in.close();
+        System.out.println(a.toString().substring(100, 200));
+        return a.toString();
+    }
+
+    private static List<Meme> getMemes(String urlString) throws Exception {
+        ArrayList<Meme> result = new ArrayList<>();
+        Document document = Jsoup.parse(getStringFromUrl(urlString));
+        Element entriesList = document.getElementById("entries_list").child(0).child(0);
+        Elements rows = entriesList.children();
+        for (Element row : rows) {
+            for (Element data : row.children()) {
+                //int redditOccurrences
+                result.add(new Meme(data.select("h2").select("a").text()));
+            }
+        }
+        return result;
+    }
+
+    private static String getSearchUrl(String name, String website, String frequency) {
+        //return "https://www.google.com/search?" + name.replaceAll("[-+.^:,]'\"","").replace(" ", "+")+ "&as_sitesearch=" + website + "&as_qdr=" + frequency;
+        return "https://trends.google.com/trends/fetchComponent?date=today%2060-m&hl=en-US&q=html5,jquery&cid=TIMESERIES_GRAPH_0&export=5";
+    }
+
+    private static String getUrl(int page) {
+        return MEMES + "/page/" + page;
+    }
+
+    public static void main(String[] args) {
+        try {
+            List<Meme> memes = new ArrayList<>();
+            for (int i = 0; i < PAGE_COUNT; i++) {
+                memes.addAll(getMemes(getUrl(i)));
+                memes.addAll(getMemes(getUrl(i) + SUBMISSIONS_MODIFIER));
+            }
+            for (Meme meme : memes) {
+                System.out.println(meme);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static class Meme {
+        String name;
+        int redditOccurrences;
+        Meme(String name) {
+            this.name = name;
+            try {
+                Document document = Jsoup.parse(getStringFromUrl("https://trends.google.com/trends/fetchComponent?date=today%2060-m&hl=en-US&q=html5,jquery&cid=TIMESERIES_GRAPH_0&export=5"));
+                //String text = document.getElementById("resultStats").ownText();
+                //this.redditOccurrences = Integer.parseInt(text.replaceAll("[^\\d]", ""));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public String toString() {
+            return name + " " + redditOccurrences;
+        }
+    }
+}
