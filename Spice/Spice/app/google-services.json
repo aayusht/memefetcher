@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "618935631733",
+    "firebase_url": "https://memedatabase-3d38e.firebaseio.com",
+    "project_id": "memedatabase-3d38e",
+    "storage_bucket": "memedatabase-3d38e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:618935631733:android:71daaa955c0a5f6e",
+        "android_client_info": {
+          "package_name": "com.memeteam.lahacks.spice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "618935631733-1fhkr3agv3aloajvsfod3pi09uacitqv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.memeteam.lahacks.spice",
+            "certificate_hash": "54d24d90550ae89081f17e6c647f751fd7025406"
+          }
+        },
+        {
+          "client_id": "618935631733-j1udn4rj50ri0l9l7ejddlo028c0obsq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPxibdTfjNB3GTFicrGMC_F5knAHP-KKc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "618935631733-j1udn4rj50ri0l9l7ejddlo028c0obsq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
