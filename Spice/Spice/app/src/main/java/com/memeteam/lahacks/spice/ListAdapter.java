@@ -7,6 +7,7 @@ package com.memeteam.lahacks.spice;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +40,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.CustomViewHold
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         Meme currMeme = memes.get(position);
-        holder.nameView.setText("" + position + "." + currMeme.name);
-        holder.indexView.setText("Index: lol idk");
+        holder.nameView.setText("" + (position + 1) + ". " + currMeme.name);
+        holder.indexView.setText("Value: " + currMeme.value);
     }
 
     @Override

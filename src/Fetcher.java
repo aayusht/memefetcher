@@ -85,7 +85,7 @@ public class Fetcher {
                             .setValue(subArray.getInt(4 * i + 7) * 100 / subArray.getInt(3));
                 }
             }
-            if (names.size() > 4) names = names.subList(4, names.size());
+            names = names.subList(Math.min(4, names.size()), names.size());
         }
     }
 
