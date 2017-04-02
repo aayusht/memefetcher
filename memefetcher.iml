@@ -16,5 +16,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jsoup-1.10.21" level="project" />
+    <orderEntry type="library" name="javalib" level="project" />
+    <orderEntry type="library" name="firebase-admin-4.1.5" level="project" />
+    <orderEntry type="library" name="guava-jdk5-17.0" level="project" />
+    <orderEntry type="library" name="jar_files" level="project" />
   </component>
 </module>
