@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
                 boolean greater = true;
                 MemeStock extreme = null;
                 for (MemeStock ms : MemeStockMarket.GLOBAL.stocks) {
-                    double d1 = ms.getPriceHistory().get(ms.getPriceHistory().size() - 2).second;
-                    double d2 = ms.getPriceHistory().get(ms.getPriceHistory().size() - 1).second;
+                    int d1 = ms.getPriceHistory().get(ms.getPriceHistory().size() - 2).second;
+                    int d2 = ms.getPriceHistory().get(ms.getPriceHistory().size() - 1).second;
                     if (d1 > d2 && d1 - d2 > diff) {
                         diff = d1 - d2;
                         greater = false;
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                         extreme = ms;
                     }
                 }
-                String marq = String.format("NASDANQ UP %d POINTS--S&MEME 500 DOWN %d POINTS--", (int) (Math.random() * 10), (int) (Math.random() * 10))
+                String marq = String.format("NASDANQ UP %d POINTS--S&MEME 500 DOWN %d POINTS--", (int) (Math.random() * 20), (int) (Math.random() * 20))
                         + extreme.getMeme().abbrev;
                 if (greater) {
                     marq += " UP ";
