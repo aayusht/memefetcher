@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.MissingFormatArgumentException;
+import java.util.*;
 
 /**
  * Created by Jiggereepuff on 4/1/2017.
@@ -10,8 +7,10 @@ public class MyMemeAcc {
     private boolean boughtPremium;
     private double accBalance;
     private double stockEquity;
+    private MemeStockMarket myStockMarket;
     private HashMap<MemeStock, Integer> ownedStock;
     private ArrayList<DatePair> totalEquityHist;
+    private ArrayList<MemeStock> diffStocks;
 
     public MyMemeAcc(Date start) {
         boughtPremium = false;
@@ -20,6 +19,12 @@ public class MyMemeAcc {
         stockEquity = 0;
         totalEquityHist = new ArrayList<>();
         totalEquityHist.add(new DatePair(0, start));
+        Set<MemeStock> hold = ownedStock.keySet();
+        diffStocks = new ArrayList<>();
+        for (MemeStock ms : hold) {
+            diffStocks.add(ms);
+        }
+        myStockMarket = new MemeStockMarket(diffStocks);
     }
 
     public MyMemeAcc(int initBalance, Date start) {
@@ -29,6 +34,12 @@ public class MyMemeAcc {
         stockEquity = 0;
         totalEquityHist = new ArrayList<>();
         totalEquityHist.add(new DatePair(initBalance, start));
+        Set<MemeStock> hold = ownedStock.keySet();
+        diffStocks = new ArrayList<>();
+        for (MemeStock ms : hold) {
+            diffStocks.add(ms);
+        }
+        myStockMarket = new MemeStockMarket(diffStocks);
     }
 
     public void purchaseStock(String name, int quantity) {
@@ -74,6 +85,7 @@ public class MyMemeAcc {
     }
 
     public double checkTotalEquity() {
+        updateEquity();
         return accBalance + stockEquity;
     }
 
@@ -89,10 +101,32 @@ public class MyMemeAcc {
         return totalEquityHist;
     }
 
+    public void updateEquity() {
+        myStockMarket.fullUpdate();
+        double tempEquity = 0;
+        for (MemeStock ms : diffStocks) {
+            tempEquity += ownedStock.get(ms) * ms.peekCurrValue();
+        }
+        stockEquity = tempEquity;
+    }
+
     public void visualizePremium() {
         if (!boughtPremium) {
             throw new MissingFormatArgumentException("Please buy!");
         }
-        System.out.println("We expect your meme to be " + " in the next time step");
+        System.out.println("Our predictor has predicted the following gains/losses for your stocks");
+        for (MemeStock ms : diffStocks) {
+            System.out.println("Predicted gain/loss for meme " + ms.getMeme().getName() + ": " + ms.getChange()[0]
+                    + " (" + ms.getChange()[1] + "). ");
+        }
+    }
+
+    public static void main(String[] args) {
+        ArrayList<DatePair> a = new ArrayList<>();
+        long start = 0;
+        for (int i = 0; i < 300; i ++) {
+            a.add(new DatePair(i * 2, new Date(start)));
+            start += 7 * 24 * 60 * 60 * 1000;
+        }
     }
 }

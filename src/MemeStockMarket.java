@@ -10,7 +10,7 @@ public class MemeStockMarket {
     public HashMap<String, MemeStock> nameFinder;
     public HashMap<String, MemeStock> abbrevFinder;
     public ArrayList<DatePair> totalMarketHist;
-    public static MemeStockMarket GLOBAL = new MemeStockMarket(null);
+    public static MemeStockMarket GLOBAL;
 
     public MemeStockMarket(ArrayList<MemeStock> stocks) {
         this.stocks = stocks;
@@ -23,7 +23,7 @@ public class MemeStockMarket {
         for (MemeStock ms : stocks) {
             total += ms.peekCurrValue();
         }
-        totalMarketHist.add(new DatePair(total, stocks.get(0).peekCurrDate());
+        totalMarketHist.add(new DatePair(total, stocks.get(0).peekCurrDate()));
     }
 
     private void passADay() {
@@ -35,6 +35,21 @@ public class MemeStockMarket {
             nextWeek = new Date(ms.peekCurrDate().getTime() + 7 * 24 * 60 * 60 * 1000);
         }
         totalMarketHist.add(new DatePair(total, nextWeek));
+    }
+
+    public void fullUpdate() {
+        Date latestTime = stocks.get(0).peekCurrDate();
+        while (latestTime.getTime() > totalMarketHist.get(totalMarketHist.size() - 1).getDate().getTime()) {
+            passADay();
+        }
+    }
+
+    private static void makeGlobal(ArrayList<Meme> allInput) {
+        ArrayList<MemeStock> input2 = new ArrayList<>();
+        for (Meme m : allInput) {
+            input2.add(new MemeStock(m));
+        }
+        GLOBAL = new MemeStockMarket(input2);
     }
 
     public ArrayList<MemeStock> mostPopularStocks(int num) {

@@ -119,7 +119,7 @@ public class MemeStock {
         return getPriceHistory().get(getPriceHistory().size() - 1).getScore();
     }
 
-    public Date peekCurrDate() { return getPriceHistory().get(getPriceHistory().size() - 1).getDate()}
+    public Date peekCurrDate() { return getPriceHistory().get(getPriceHistory().size() - 1).getDate(); }
 
     public Meme getMeme() {
         return base;
