@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView textView = (TextView) findViewById(R.id.marquee);
+        final TextView textView = (TextView) findViewById(R.id.marquee);
         textView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
         textView .setSingleLine(true);
         textView.setMarqueeRepeatLimit(-1);
@@ -52,9 +52,37 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-                    memes.add(new Meme(name.getKey(), pairArrayList));
+                    Meme m = new Meme(name.getKey(), pairArrayList);
+                    memes.add(m);
                 }
                 Collections.sort(memes);
+                MemeStockMarket.makeGlobal(memes);
+                MemeStockMarket.GLOBAL.fullUpdate();
+                double diff = 0;
+                boolean greater = true;
+                MemeStock extreme = null;
+                for (MemeStock ms : MemeStockMarket.GLOBAL.stocks) {
+                    double d1 = ms.getPriceHistory().get(ms.getPriceHistory().size()-2).second;
+                    double d2 = ms.getPriceHistory().get(ms.getPriceHistory().size()-1).second;
+                    if (d1>d2 && d1-d2 > diff) {
+                        diff = d1-d2;
+                        greater = false;
+                        extreme = ms;
+                    } else if (d2>d1 && d2-d1 > diff) {
+                        diff = d2-d1;
+                        greater = true;
+                        extreme = ms;
+                    }
+                }
+                String marq = String.format("NASDANQ UP %d POINTS--S&MEME 500 DOWN %d POINTS--",(int)(Math.random()*10),(int)(Math.random()*10))
+                                +extreme.getMeme().abbrev;
+                if (greater) {
+                    marq += " UP ";
+                } else {
+                    marq += " DOWN ";
+                }
+                marq += diff+" POINTS--";
+                textView.setText(marq);
                 listAdapter.notifyDataSetChanged();
             }
 

@@ -15,6 +15,7 @@ public class Meme implements Comparable<Meme>{
     String abbrev = "";
     static final double EPSILON = .001;
     ArrayList<Pair<Date, Integer>> scores;
+    ArrayList<Pair<Date, Integer>> priceHistory = new ArrayList<>();
     double value;
 
     public Meme(String name, ArrayList<Pair<Date, Integer>> scores) {
@@ -37,4 +38,5 @@ public class Meme implements Comparable<Meme>{
     public int compareTo(@NonNull Meme o) {
         return Math.abs(value - o.value) < EPSILON ? 0 : (int) (1000 * value - 1000 * o.value);
     }
+
 }
