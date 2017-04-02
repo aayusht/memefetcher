@@ -13,9 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
-import com.memeteam.lahacks.spice.Fetcher.Meme;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -25,11 +23,10 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.CustomViewHolder> {
 
-    private int size;
-    private ArrayList<Meme> memes;
+    public List<Meme> memes;
 
-    public ListAdapter(int size) {
-        this.size = size;
+    public ListAdapter(List<Meme> memes) {
+        this.memes = memes;
     }
 
     @Override
@@ -42,7 +39,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.CustomViewHold
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         Meme currMeme = memes.get(position);
-        holder.nameView.setText("" + position + ". " + currMeme.name);
+        holder.nameView.setText("" + position + "." + currMeme.name);
         holder.indexView.setText("Index: lol idk");
     }
 

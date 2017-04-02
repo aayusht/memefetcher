@@ -12,5 +12,10 @@ import java.util.Date;
 public class Meme {
     String name;
     ArrayList<Pair<Date, Integer>> scores;
-    public Meme()
+    int index;
+    public Meme(String name, ArrayList<Pair<Date, Integer>> scores) {
+        this.name = name;
+        this.scores = scores;
+        //TODO compute index from scores
+    }
 }
