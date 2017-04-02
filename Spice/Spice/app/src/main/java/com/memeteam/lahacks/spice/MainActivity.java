@@ -6,7 +6,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.widget.TextView;
-import com.memeteam.lahacks.spice.Fetcher.Meme;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +29,22 @@ public class MainActivity extends AppCompatActivity {
         textView.setFocusableInTouchMode(true);
         textView.setFocusable(true);
 
-        List<Meme> memes = new ArrayList<>();
-        memes.add(new Meme("poop meme"));
-        memes.add(new Meme("your mum"));
-        memes.add(new Meme("git ou' me cah brum brum"));
+        final List<Meme> memes = new ArrayList<>();
+
+        FirebaseDatabase.getInstance().getReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                memes.clear();
+                for (DataSnapshot meme : dataSnapshot.getChildren()) {
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        })
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
