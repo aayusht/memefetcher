@@ -141,7 +141,7 @@ public class Fetcher {
         }
         try {
             List<Meme> memes = new ArrayList<>();
-            for (int i = 0; i < PAGE_COUNT; i++) {
+            for (int i = 5; i < PAGE_COUNT; i++) {
                 memes.addAll(getMemes(getUrl(i)));
                 memes.addAll(getMemes(getUrl(i) + SUBMISSIONS_MODIFIER));
             }

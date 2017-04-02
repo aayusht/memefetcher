@@ -23,7 +23,7 @@ public class MemeStockMarket {
         for (MemeStock ms : stocks) {
             total += ms.peekCurrValue();
         }
-        totalMarketHist.add(new DatePair(total, stocks.get(0).peekCurrDate());
+        totalMarketHist.add(new DatePair(total, stocks.get(0).peekCurrDate()));
     }
 
     private void passADay() {
