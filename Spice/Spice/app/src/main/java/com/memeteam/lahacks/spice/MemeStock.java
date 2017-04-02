@@ -45,7 +45,7 @@ public class MemeStock {
             copy[counter] = i;
             counter += 1;
         }
-        volatility = StdStats.stddev(copy);
+        volatility = stddev(copy);
         /*
         check if volatility more than normal, if more volatile less weight on first one
          */
@@ -137,5 +137,18 @@ public class MemeStock {
 
     public ArrayList<Pair<Date,Integer>> getPriceHistory() {
         return priceHistory;
+    }
+
+    public static double stddev(int[] data) {
+        double total = 0;
+        for (int d : data) {
+            total += d;
+        }
+        double avg = total / data.length;
+        double var = 0;
+        for (double da : data) {
+            var += Math.pow(da - avg, 2);
+        }
+        return Math.sqrt(var);
     }
 }

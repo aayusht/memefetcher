@@ -1,5 +1,6 @@
 package com.memeteam.lahacks.spice;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +38,42 @@ public class MainActivity extends AppCompatActivity {
 
         final ArrayList<Meme> memes = new ArrayList<>();
         final ListAdapter listAdapter = new ListAdapter(memes);
+        class Shit extends AsyncTask<ArrayList<Meme>,Void,String> {
+            @Override
+            protected String doInBackground(ArrayList<Meme> ... memes) {
+                MemeStockMarket.makeGlobal(memes[0]);
+                MemeStockMarket.GLOBAL.fullUpdate();
+                double diff = 0;
+                boolean greater = true;
+                MemeStock extreme = null;
+                for (MemeStock ms : MemeStockMarket.GLOBAL.stocks) {
+                    double d1 = ms.getPriceHistory().get(ms.getPriceHistory().size() - 2).second;
+                    double d2 = ms.getPriceHistory().get(ms.getPriceHistory().size() - 1).second;
+                    if (d1 > d2 && d1 - d2 > diff) {
+                        diff = d1 - d2;
+                        greater = false;
+                        extreme = ms;
+                    } else if (d2 > d1 && d2 - d1 > diff) {
+                        diff = d2 - d1;
+                        greater = true;
+                        extreme = ms;
+                    }
+                }
+                String marq = String.format("NASDANQ UP %d POINTS--S&MEME 500 DOWN %d POINTS--", (int) (Math.random() * 10), (int) (Math.random() * 10))
+                        + extreme.getMeme().abbrev;
+                if (greater) {
+                    marq += " UP ";
+                } else {
+                    marq += " DOWN ";
+                }
+                marq += diff + " POINTS--";
+                return marq;
+            }
+            protected void onPostExecute(String marq) {
+                textView.setText(marq);
+            }
+        }
+        final Shit s = new Shit();
 
         FirebaseDatabase.getInstance().getReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -56,39 +93,11 @@ public class MainActivity extends AppCompatActivity {
                     memes.add(m);
                 }
                 Collections.sort(memes);
-                MemeStockMarket.makeGlobal(memes);
-                MemeStockMarket.GLOBAL.fullUpdate();
-                double diff = 0;
-                boolean greater = true;
-                MemeStock extreme = null;
-                for (MemeStock ms : MemeStockMarket.GLOBAL.stocks) {
-                    double d1 = ms.getPriceHistory().get(ms.getPriceHistory().size()-2).second;
-                    double d2 = ms.getPriceHistory().get(ms.getPriceHistory().size()-1).second;
-                    if (d1>d2 && d1-d2 > diff) {
-                        diff = d1-d2;
-                        greater = false;
-                        extreme = ms;
-                    } else if (d2>d1 && d2-d1 > diff) {
-                        diff = d2-d1;
-                        greater = true;
-                        extreme = ms;
-                    }
-                }
-                String marq = String.format("NASDANQ UP %d POINTS--S&MEME 500 DOWN %d POINTS--",(int)(Math.random()*10),(int)(Math.random()*10))
-                                +extreme.getMeme().abbrev;
-                if (greater) {
-                    marq += " UP ";
-                } else {
-                    marq += " DOWN ";
-                }
-                marq += diff+" POINTS--";
-                textView.setText(marq);
                 listAdapter.notifyDataSetChanged();
-            }
 
+            }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
 

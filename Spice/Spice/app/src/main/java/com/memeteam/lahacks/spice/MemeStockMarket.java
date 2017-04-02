@@ -57,6 +57,10 @@ public class MemeStockMarket {
         GLOBAL = new MemeStockMarket(input2);
     }
 
+    public static void saveGlobal() {
+
+    }
+
     public ArrayList<MemeStock> mostPopularStocks(int num) {
         int maxIndex, counter;
         ArrayList<MemeStock> dankest = new ArrayList<>();
