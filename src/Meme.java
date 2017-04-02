@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -6,11 +7,23 @@ import java.util.List;
  */
 public class Meme {
     private String name;
+    private String abbrev = "";
     private ArrayList<Integer> ratings;
     private String picture;
 
     public Meme(String name, ArrayList<Integer> relativeRatings, String link) {
         this.name = name;
+        int counter = 0;
+        for (int i = 0; i < name.length(); i++) {
+            if (name.charAt(i) != ' ') {
+                abbrev += Character.toUpperCase(name.charAt(i));
+                counter += 1;
+            }
+
+            if (counter == 3) {
+                i = name.length();
+            }
+        }
         ratings = relativeRatings;
         picture = link;
     }
@@ -35,6 +48,10 @@ public class Meme {
         for (int i : newData) {
             ratings.add(i);
         }
+    }
+
+    public String getAbbrev() {
+        return abbrev;
     }
 
     public void visualize() {

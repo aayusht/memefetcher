@@ -11,7 +11,10 @@ public class MemeStock {
     private double volatility;
     private ArrayList<Double> priceHistory;
     private ArrayList<Double> volatilityHistory;
-    private boolean boughtPremium = false;
+
+    /*
+    Make sure to call predict before you get the next price
+     */
 
     public MemeStock(Meme m) {
         base = m;
@@ -31,7 +34,7 @@ public class MemeStock {
     public double getPredMarketValue() {
         List<Integer> ratings = base.getRatings();
         if (priceHistory.size() < 2) {
-            return 750;
+            throw new UnsupportedOperationException("Too little data");
         }
         double scale1;
         double trend = priceHistory.get(priceHistory.size() - 1) - priceHistory.get(priceHistory.size() - 2);
@@ -55,8 +58,8 @@ public class MemeStock {
          */
         volatilityHistory.add(volatility);
         scale1 = (1.0 * ratings.size() / 5.0) / volatility;
-        return scale1 * priceHistory.get(priceHistory.size() - 1) +
-                (1 - scale1) * getAverage(priceHistory) + trend / (4 * scale1);
+        return roundToNearestCent(scale1 * priceHistory.get(priceHistory.size() - 1) +
+                (1 - scale1) * getAverage(priceHistory) + trend / (4 * scale1));
     }
 
     public double getMarketValue() {
@@ -73,9 +76,13 @@ public class MemeStock {
         double center = (a + b) / 4 + 20;
         a = center + (a - b) / 2;
         b = center + (b - a) / 2;
-        stockPrice = 2 * a - b;
+        stockPrice = roundToNearestCent(2 * a - b);
         priceHistory.add(stockPrice);
         return stockPrice;
+    }
+
+    public List<Double> getPriceHistory() {
+        return priceHistory;
     }
 
     public int getIndexMax() {
@@ -106,15 +113,29 @@ public class MemeStock {
         return total / data.size();
     }
 
-    public void buyPremium() {
-        boughtPremium = true;
+    /* Called after getMarketValue()
+    First Number is Total change, second is percent change
+     */
+    public double[] getChange() {
+        double netChange = getPriceHistory().get(getPriceHistory().size() - 1)
+                - getPriceHistory().get(getPriceHistory().size() - 2);
+        double percentage = netChange / getPriceHistory().get(getPriceHistory().size() - 1);
+        double[] changes = new double[2];
+        changes[0] = netChange;
+        changes[1] = percentage;
+        return changes;
     }
 
-    public void visualizePremium() {
-        if (!boughtPremium) {
-            throw new MissingFormatArgumentException("Please buy!");
-        }
-        System.out.println("We expect your meme to be " + getPredMarketValue() + " in the next time step");
+    public double peekCurrValue() {
+        return getPriceHistory().get(getPriceHistory().size() - 1);
+    }
+
+    public Meme getMeme() {
+        return base;
+    }
+
+    public static double roundToNearestCent(double d) {
+        return (int) (d * 100) / 100.0;
     }
 
     public static void main(String[] args) {
@@ -147,7 +168,7 @@ public class MemeStock {
         ratings.add(20);
         ratings.add(20);
         Meme m = new Meme("Bad luck Brian", ratings, "hi");
-        MemeStock s = new MemeStock(m);
+        MemeStock s = new MemeStock(m, 5);
         for (int i = 0; i < ratings.size(); i ++) {
             System.out.println("Predicted: " + s.getPredMarketValue() + ", Actual: " + s.getMarketValue());
         }
