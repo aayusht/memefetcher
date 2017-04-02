@@ -24,7 +24,7 @@ public class MemeStock {
     }
 
     public double getPredMarketValue() {
-        List<Pair<Date,Integer>> ratings = base.getRatings();
+        List<Pair<Date,Integer>> ratings = base.scores;
         if (priceHistory.size() < 2) {
             throw new UnsupportedOperationException("Too little data");
         }
@@ -72,7 +72,7 @@ public class MemeStock {
         if (priceHistory.isEmpty()) {
             priceHistory.add(new Pair(new Date(0), stockPrice));
         } else {
-            priceHistory.add(new DatePair(new Date(priceHistory.get(priceHistory.size() - 1).first.getTime() + 7 * 24 * 60 * 60 * 1000), stockPrice));
+            priceHistory.add(new Pair(new Date(priceHistory.get(priceHistory.size() - 1).first.getTime() + 7 * 24 * 60 * 60 * 1000), stockPrice));
         }
         return stockPrice;
     }
@@ -100,7 +100,7 @@ public class MemeStock {
     public double getAverage(List<Pair<Date,Integer>> data) {
         double total = 0;
         for (Pair d : data) {
-            total += d.second;
+            total += (int)d.second;
         }
         return total / data.size();
     }

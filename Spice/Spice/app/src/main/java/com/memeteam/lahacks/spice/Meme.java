@@ -21,6 +21,7 @@ public class Meme implements Comparable<Meme>{
         this.name = name;
         this.scores = scores;
         this.value = (new MemeStock(this)).getMarketValue();
+        int counter = 0;
         for (int i = 0; i < name.length(); i++) {
             if (name.charAt(i) != ' ') {
                 abbrev += Character.toUpperCase(name.charAt(i));
