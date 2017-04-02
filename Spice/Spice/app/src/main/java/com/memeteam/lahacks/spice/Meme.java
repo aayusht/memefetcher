@@ -11,14 +11,25 @@ import java.util.Date;
  */
 
 public class Meme implements Comparable<Meme>{
-    static final double EPSILON = .001;
     String name;
+    String abbrev = "";
+    static final double EPSILON = .001;
     ArrayList<Pair<Date, Integer>> scores;
     double value;
+
     public Meme(String name, ArrayList<Pair<Date, Integer>> scores) {
         this.name = name;
         this.scores = scores;
         this.value = (new MemeStock(this)).getMarketValue();
+        for (int i = 0; i < name.length(); i++) {
+            if (name.charAt(i) != ' ') {
+                abbrev += Character.toUpperCase(name.charAt(i));
+                counter += 1;
+            }
+            if (counter == 3) {
+                i = name.length();
+            }
+        }
     }
 
     @Override

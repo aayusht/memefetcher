@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         textView.setFocusableInTouchMode(true);
         textView.setFocusable(true);
 
-        final ArrayList<Meme> memes = new ArrayList<>();
+        final ArrayList<MemeStock> memes = new ArrayList<>();
         final ListAdapter listAdapter = new ListAdapter(memes);
 
         FirebaseDatabase.getInstance().getReference().addListenerForSingleValueEvent(new ValueEventListener() {
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-                    memes.add(new Meme(name.getKey(), pairArrayList));
+                    memes.add(new MemeStock(new Meme(name.getKey(), pairArrayList)));
                 }
                 Collections.sort(memes);
                 listAdapter.notifyDataSetChanged();
