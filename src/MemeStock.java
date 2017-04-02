@@ -54,7 +54,10 @@ public class MemeStock {
     }
 
     public double getMarketValue() {
-        double a = peekCurrValue();
+        if (base.getRatings().isEmpty()) {
+            throw new IllegalArgumentException("No ratings for this meme");
+        }
+        double a = base.getRatings().get(base.getRatings().size() - 1).getScore();
         double b;
         if (priceHistory.size() < 2) {
             b = a;
@@ -65,8 +68,12 @@ public class MemeStock {
         a = center + (a - b) / 2;
         b = center + (b - a) / 2;
         stockPrice = roundToNearestCent(2 * a - b);
-        priceHistory.add(new DatePair(stockPrice, new Date(
-                getPriceHistory().get(priceHistory.size() - 1).getDate().getTime() + 7 * 24 * 60 * 60 * 1000)));
+        if (priceHistory.isEmpty()) {
+            priceHistory.add(new DatePair(stockPrice, new Date(0)));
+        } else {
+            priceHistory.add(new DatePair(stockPrice, new Date(
+                    getPriceHistory().get(priceHistory.size() - 1).getDate().getTime() + 7 * 24 * 60 * 60 * 1000)));
+        }
         return stockPrice;
     }
 
@@ -106,6 +113,9 @@ public class MemeStock {
     First Number is Total change, second is percent change
      */
     public double[] getChange() {
+        if (getPriceHistory().size() < 2) {
+            return new double[2];
+        }
         double netChange = getPriceHistory().get(getPriceHistory().size() - 1).getScore()
                 - getPriceHistory().get(getPriceHistory().size() - 2).getScore();
         double percentage = netChange / peekCurrValue();

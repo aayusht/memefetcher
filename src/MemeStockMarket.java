@@ -14,6 +14,8 @@ public class MemeStockMarket {
 
     public MemeStockMarket(ArrayList<MemeStock> stocks) {
         this.stocks = stocks;
+        nameFinder = new HashMap<>();
+        abbrevFinder = new HashMap<>();
         for (MemeStock ms : stocks) {
             nameFinder.put(ms.getMeme().getName(), ms);
             abbrevFinder.put(ms.getMeme().getAbbrev(), ms);
@@ -44,7 +46,7 @@ public class MemeStockMarket {
         }
     }
 
-    private static void makeGlobal(ArrayList<Meme> allInput) {
+    public static void makeGlobal(ArrayList<Meme> allInput) {
         ArrayList<MemeStock> input2 = new ArrayList<>();
         for (Meme m : allInput) {
             input2.add(new MemeStock(m));

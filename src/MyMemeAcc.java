@@ -10,7 +10,7 @@ public class MyMemeAcc {
     private MemeStockMarket myStockMarket;
     private HashMap<MemeStock, Integer> ownedStock;
     private ArrayList<DatePair> totalEquityHist;
-    private ArrayList<MemeStock> diffStocks;
+    private HashSet<MemeStock> diffStocks;
 
     public MyMemeAcc(Date start) {
         boughtPremium = false;
@@ -19,12 +19,7 @@ public class MyMemeAcc {
         stockEquity = 0;
         totalEquityHist = new ArrayList<>();
         totalEquityHist.add(new DatePair(0, start));
-        Set<MemeStock> hold = ownedStock.keySet();
-        diffStocks = new ArrayList<>();
-        for (MemeStock ms : hold) {
-            diffStocks.add(ms);
-        }
-        myStockMarket = new MemeStockMarket(diffStocks);
+        diffStocks = new HashSet<>();
     }
 
     public MyMemeAcc(int initBalance, Date start) {
@@ -34,12 +29,7 @@ public class MyMemeAcc {
         stockEquity = 0;
         totalEquityHist = new ArrayList<>();
         totalEquityHist.add(new DatePair(initBalance, start));
-        Set<MemeStock> hold = ownedStock.keySet();
-        diffStocks = new ArrayList<>();
-        for (MemeStock ms : hold) {
-            diffStocks.add(ms);
-        }
-        myStockMarket = new MemeStockMarket(diffStocks);
+        diffStocks = new HashSet<>();
     }
 
     public void purchaseStock(String name, int quantity) {
@@ -59,6 +49,7 @@ public class MyMemeAcc {
         accBalance -= quantity * bought.peekCurrValue();
         stockEquity += quantity * bought.peekCurrValue();
         ownedStock.put(bought, ownedStock.get(bought) + quantity);
+        diffStocks.add(bought);
     }
 
     public void sellStock(String name, int quantity) {
@@ -78,6 +69,7 @@ public class MyMemeAcc {
         accBalance += quantity * sold.peekCurrValue();
         stockEquity -= quantity * sold.peekCurrValue();
         ownedStock.put(sold, ownedStock.get(sold) - quantity);
+        diffStocks.add(sold);
     }
 
     public double checkBalance() {
@@ -102,6 +94,11 @@ public class MyMemeAcc {
     }
 
     public void updateEquity() {
+        ArrayList<MemeStock> temp = new ArrayList<>();
+        for (MemeStock m : diffStocks) {
+            temp.add(m);
+        }
+        myStockMarket = new MemeStockMarket(temp);
         myStockMarket.fullUpdate();
         double tempEquity = 0;
         for (MemeStock ms : diffStocks) {
@@ -123,10 +120,22 @@ public class MyMemeAcc {
 
     public static void main(String[] args) {
         ArrayList<DatePair> a = new ArrayList<>();
+        ArrayList<Meme> b = new ArrayList<>();
         long start = 0;
         for (int i = 0; i < 300; i ++) {
             a.add(new DatePair(i * 2, new Date(start)));
             start += 7 * 24 * 60 * 60 * 1000;
         }
+        Meme d = new Meme("duck", a, "wow");
+        MemeStock ms = new MemeStock(d);
+        ArrayList<MemeStock> f = new ArrayList<>();
+        f.add(ms);
+        MyMemeAcc mma= new MyMemeAcc(new Date(0));
+        mma.accBalance += 5000;
+        b.add(d);
+        mma.buyPremium();
+        MemeStockMarket.makeGlobal(b);
+        mma.purchaseStock("duck", 20);
+        mma.visualizePremium();
     }
 }
