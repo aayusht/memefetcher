@@ -54,8 +54,4 @@ public class Meme {
     public String getAbbrev() {
         return abbrev;
     }
-
-    public void visualize() {
-
-    }
 }
