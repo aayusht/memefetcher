@@ -28,7 +28,7 @@ public class MemeStockMarket {
         totalMarketHist.add(new DatePair(total, stocks.get(0).peekCurrDate()));
     }
 
-    private void passADay() {
+    /*private void passADay() {
         Date nextWeek = stocks.get(0).peekCurrDate();
         double total = 0;
         for (MemeStock ms : stocks) {
@@ -37,13 +37,23 @@ public class MemeStockMarket {
             nextWeek = new Date(ms.peekCurrDate().getTime() + 7 * 24 * 60 * 60 * 1000);
         }
         totalMarketHist.add(new DatePair(total, nextWeek));
-    }
+    }*/
 
     public void fullUpdate() {
-        Date latestTime = stocks.get(0).peekCurrDate();
+        /*Date latestTime = stocks.get(0).peekCurrDate();
         while (latestTime.getTime() > totalMarketHist.get(totalMarketHist.size() - 1).getDate().getTime()) {
             passADay();
+        }*/
+        int total = 0;
+        Date nextWeek = stocks.get(0).peekCurrDate();
+        for (MemeStock ms : stocks) {
+            while (ms.getPriceHistory().size() < ms.getMeme().getRatings().size()) {
+                ms.getMarketValue();
+                total += ms.peekCurrValue();
+                nextWeek = new Date(ms.peekCurrDate().getTime() + 7 * 24 * 60 * 60 * 1000 / stocks.size());
+            }
         }
+        totalMarketHist.add(new DatePair(total, nextWeek));
     }
 
     public static void makeGlobal(ArrayList<Meme> allInput) {
