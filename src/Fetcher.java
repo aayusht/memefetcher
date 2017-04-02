@@ -116,6 +116,7 @@ public class Fetcher {
         String rest = "";
         for (String s: names) {
             String temp = s.replace(" ","%20");
+            temp = temp.replaceAll("\"*\'*","");
             rest += "," + temp;
         }
         return "https://trends.google.com/trends/fetchComponent?date=today%20"+duration+"-m&hl=en-US&q="+REF+rest+"&geo=US&cid=TIMESERIES_GRAPH_0&export=5";
@@ -144,7 +145,11 @@ public class Fetcher {
                 memes.addAll(getMemes(getUrl(i)));
                 memes.addAll(getMemes(getUrl(i) + SUBMISSIONS_MODIFIER));
             }
+<<<<<<< HEAD
             sendData(memes);
+=======
+            sendData(memes.get(0).name);
+>>>>>>> 7c8801e39ddd03b4890a6bdabd28607db6e7fd70
         } catch (Exception e) {
             e.printStackTrace();
         }
