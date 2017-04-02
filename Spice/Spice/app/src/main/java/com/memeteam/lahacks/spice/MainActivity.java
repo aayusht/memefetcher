@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.Pair;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -12,7 +14,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 
@@ -29,25 +35,37 @@ public class MainActivity extends AppCompatActivity {
         textView.setFocusableInTouchMode(true);
         textView.setFocusable(true);
 
-        final List<Meme> memes = new ArrayList<>();
+        final ArrayList<Meme> memes = new ArrayList<>();
+        final ListAdapter listAdapter = new ListAdapter(memes);
 
-        FirebaseDatabase.getInstance().getReference().addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 memes.clear();
-                for (DataSnapshot meme : dataSnapshot.getChildren()) {
-
+                for (DataSnapshot name : dataSnapshot.getChildren()) {
+                    ArrayList<Pair<Date, Integer>> pairArrayList = new ArrayList<Pair<Date, Integer>>();
+                    DateFormat df = new SimpleDateFormat("yyyyMMdd");
+                    for (DataSnapshot date : name.getChildren()) {
+                        try {
+                            pairArrayList.add(new Pair<>(df.parse(date.getKey()), date.getValue(Integer.class)));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    memes.add(new Meme(name.getKey(), pairArrayList));
                 }
+                Collections.sort(memes);
+                listAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        })
+        });
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new ListAdapter(memes));
+        recyclerView.setAdapter(listAdapter);
     }
 }
