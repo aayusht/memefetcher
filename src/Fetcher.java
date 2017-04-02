@@ -3,6 +3,8 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,25 +13,18 @@ import org.jsoup.select.Elements;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by hp on 4/1/2017.
  */
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 ;
 
@@ -39,24 +34,25 @@ import java.util.List;
 public class Fetcher {
     private static final String MEMES = "http://knowyourmeme.com/categories/meme";
     private static final String SUBMISSIONS_MODIFIER = "?status=submissions";
-    private static final int PAGE_COUNT = 5;
+    private static final int PAGE_COUNT = 10;
     private static final int FIVEYEARS = 60;
     private static final int ONEYEAR = 12;
     private static final int THREEMONTHS = 3;
     private static final int ONEMONTH = 1;
     public static final String REF = "swords";
+    public static DatabaseReference ref;
 
-//    private static String getStringFromUrl(String urlString) throws Exception{
-//        URL url = new URL(urlString);
-//        URLConnection yc = url.openConnection();
-//        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream(), "UTF-8"));
-//        String inputLine;
-//        StringBuilder a = new StringBuilder();
-//        while ((inputLine = in.readLine()) != null) { a.append(inputLine); }
-//        in.close();
-//        //System.out.println(a.toString().substring(100, 200));
-//        return a.toString();
-//    }
+    private static String getStringFromUrl(String urlString) throws Exception{
+        URL url = new URL(urlString);
+        URLConnection yc = url.openConnection();
+        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream(), "UTF-8"));
+        String inputLine;
+        StringBuilder a = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) { a.append(inputLine); }
+        in.close();
+        //System.out.println(a.toString().substring(100, 200));
+        return a.toString();
+    }
 
     private static List<Meme> getMemes(String urlString) throws IOException {
         ArrayList<Meme> result = new ArrayList<>();
@@ -72,30 +68,47 @@ public class Fetcher {
         return result;
     }
 
-    private static void sendData(List<String> names, DatabaseReference root) throws IOException {
-        if (names.size() > 4) {
-            sendData(names.subList(0,4), root);
-            names = names.subList(4,names.size());
+    private static void sendData(List<Meme> memes) throws Exception {
+        ref = FirebaseDatabase.getInstance().getReference();
+        List<String> names = new LinkedList<>();
+        for (Meme meme : memes) { names.add(meme.toString()); }
+        while (names.size() > 0) {
+            int size = Math.min(4, names.size());
+            List<String> subNames = names.subList(0, Math.min(4, names.size()));
+            JSONObject data = processGraph(getStringFromUrl(getDataUrl(names.subList(0, size), FIVEYEARS)));
+            JSONArray array = data.getJSONArray("rows");
+            for (Object date : array) {
+                JSONArray subArray = (JSONArray) date;
+                if (!subArray.get(3).getClass().getSimpleName().equals("Integer")) { continue; }
+                for (int i = 0; i < size; i++) {
+                    ref.child(subNames.get(i).replaceAll("[\\.\\#\\$\\[\\]\\/]", "")).child("" + subArray.getJSONObject(0).getBigInteger("v"))
+                            .setValue(subArray.getInt(4 * i + 7) * 100 / subArray.getInt(3));
+                }
+            }
+            if (names.size() > 4) names = names.subList(4, names.size());
         }
-        Document document = Jsoup.connect(getDataUrl(names,FIVEYEARS)).get();
-        Elements tableElements = document.select("table");
+    }
 
-        Elements headerElems = tableElements.select("thead tr th");
-        Elements rowElems = tableElements.select("tbody tr");
-        for (int i = 1; i < headerElems.size(); i++) {
-            String head = headerElems.get(i).text();
-            for (Element r: rowElems) {
-                root.child(head).child(r.select("td").get(0).text()).setValue(r.select("td").get(i));
+
+    public static JSONObject processGraph(String rawSource) {
+        int start = rawSource.indexOf("var chartData = ") + 16;
+        String text = rawSource.substring(start, rawSource.indexOf(";", start));
+        while (text.contains("new Date")) {
+            try {
+                int first = text.indexOf("new Date(");
+                int last = text.indexOf(")");
+                String[] date = text.substring(first + 9, last).split(", ");
+                date[1] = "" + (Integer.parseInt(date[1]) + 1);
+                String inputDate = date[0];
+                inputDate += (date[1].length() == 1) ? "0" + date[1] : date[1];
+                inputDate += (date[2].length() == 1) ? "0" + date[2] : date[2];
+                DateFormat df = new SimpleDateFormat("yyyyMMdd");
+                text = text.substring(0, first) + inputDate + text.substring(last + 1);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-    }
-    public static void sendData(List<String> names) throws IOException {
-        sendData(names, FirebaseDatabase.getInstance().getReference());
-    }
-    public static void sendData(String name) throws IOException {
-        ArrayList<String> temp = new ArrayList<>();
-        temp.add(name);
-        sendData(temp);
+        return new JSONObject(text);
     }
 
     private static String getDataUrl(List<String> names, int duration) {
@@ -131,7 +144,7 @@ public class Fetcher {
                 memes.addAll(getMemes(getUrl(i)));
                 memes.addAll(getMemes(getUrl(i) + SUBMISSIONS_MODIFIER));
             }
-            sendData(memes.get(0).toString());
+            sendData(memes);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -139,21 +152,13 @@ public class Fetcher {
 
     static class Meme {
         String name;
-        int redditOccurrences;
         Meme(String name) {
             this.name = name;
-//            try {
-//                Document document = Jsoup.parse(getStringFromUrl("https://trends.google.com/trends/fetchComponent?date=today%2060-m&hl=en-US&q=html5,jquery&cid=TIMESERIES_GRAPH_0&export=5"));
-//                //String text = document.getElementById("resultStats").ownText();
-//                //this.redditOccurrences = Integer.parseInt(text.replaceAll("[^\\d]", ""));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
         }
 
         @Override
         public String toString() {
-            return name + " " + redditOccurrences;
+            return name;
         }
     }
 }

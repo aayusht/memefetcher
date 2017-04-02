@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.memeteam.lahacks.spice.Fetcher.Meme;
 
@@ -24,10 +25,11 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.CustomViewHolder> {
 
-    public List<Meme> memes;
+    private int size;
+    private ArrayList<Meme> memes;
 
-    public ListAdapter(List<Meme> memes) {
-        this.memes = memes;
+    public ListAdapter(int size) {
+        this.size = size;
     }
 
     @Override
