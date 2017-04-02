@@ -145,11 +145,7 @@ public class Fetcher {
                 memes.addAll(getMemes(getUrl(i)));
                 memes.addAll(getMemes(getUrl(i) + SUBMISSIONS_MODIFIER));
             }
-<<<<<<< HEAD
             sendData(memes);
-=======
-            sendData(memes.get(0).name);
->>>>>>> 7c8801e39ddd03b4890a6bdabd28607db6e7fd70
         } catch (Exception e) {
             e.printStackTrace();
         }
