@@ -19,7 +19,7 @@ public class MemeStock {
      */
     public MemeStock(Meme m) {
         base = m;
-        priceHistory = new ArrayList<>();
+        priceHistory = m.priceHistory;
         stockPrice = getMarketValue();
     }
 
@@ -133,5 +133,9 @@ public class MemeStock {
 
     public static double roundToNearestCent(double d) {
         return (int) (d * 100) / 100.0;
+    }
+
+    public ArrayList<Pair<Date,Integer>> getPriceHistory() {
+        return priceHistory;
     }
 }
