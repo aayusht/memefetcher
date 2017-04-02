@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -8,6 +9,7 @@ public class MemeStockMarket {
     public ArrayList<MemeStock> stocks;
     public HashMap<String, MemeStock> nameFinder;
     public HashMap<String, MemeStock> abbrevFinder;
+    public ArrayList<DatePair> totalMarketHist;
     public static MemeStockMarket GLOBAL = new MemeStockMarket(null);
 
     public MemeStockMarket(ArrayList<MemeStock> stocks) {
@@ -16,12 +18,23 @@ public class MemeStockMarket {
             nameFinder.put(ms.getMeme().getName(), ms);
             abbrevFinder.put(ms.getMeme().getAbbrev(), ms);
         }
+        totalMarketHist = new ArrayList<>();
+        double total = 0;
+        for (MemeStock ms : stocks) {
+            total += ms.peekCurrValue();
+        }
+        totalMarketHist.add(new DatePair(total, stocks.get(0).peekCurrDate());
     }
 
     private void passADay() {
+        Date nextWeek = stocks.get(0).peekCurrDate();
+        double total = 0;
         for (MemeStock ms : stocks) {
             ms.getMarketValue();
+            total += ms.peekCurrValue();
+            nextWeek = new Date(ms.peekCurrDate().getTime() + 7 * 24 * 60 * 60 * 1000);
         }
+        totalMarketHist.add(new DatePair(total, nextWeek));
     }
 
     public ArrayList<MemeStock> mostPopularStocks(int num) {

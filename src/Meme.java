@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,10 +9,10 @@ import java.util.List;
 public class Meme {
     private String name;
     private String abbrev = "";
-    private ArrayList<Integer> ratings;
+    private ArrayList<DatePair> ratings;
     private String picture;
 
-    public Meme(String name, ArrayList<Integer> relativeRatings, String link) {
+    public Meme(String name, ArrayList<DatePair> relativeRatings, String link) {
         this.name = name;
         int counter = 0;
         for (int i = 0; i < name.length(); i++) {
@@ -28,7 +29,7 @@ public class Meme {
         picture = link;
     }
 
-    public List<Integer> getRatings() {
+    public ArrayList<DatePair> getRatings() {
         return ratings;
     }
 
@@ -40,13 +41,13 @@ public class Meme {
         return name;
     }
 
-    public void adjust(int newRating) {
-        ratings.add(newRating);
+    public void adjust(int newRating, Date date) {
+        ratings.add(new DatePair(newRating, date));
     }
 
-    public void adjust(Iterable<Integer> newData) {
-        for (int i : newData) {
-            ratings.add(i);
+    public void adjust(Iterable<DatePair> newData) {
+        for (DatePair d : newData) {
+            ratings.add(d);
         }
     }
 
