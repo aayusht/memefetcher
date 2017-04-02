@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                     DateFormat df = new SimpleDateFormat("yyyyMMdd");
                     for (DataSnapshot date : name.getChildren()) {
                         try {
-                            pairArrayList.add(new Pair<>(df.parse(date.getKey()), date.getValue(Integer.class)));
+                            pairArrayList.add(new Pair<Date,Integer>(df.parse(date.getKey()), date.getValue(Integer.class)));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     memes.add(m);
                 }
                 Collections.sort(memes);
+                s.execute(memes);
                 listAdapter.notifyDataSetChanged();
 
             }

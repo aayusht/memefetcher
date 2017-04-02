@@ -70,9 +70,9 @@ public class MemeStock {
         b = center + (b - a) / 2;
         stockPrice = roundToNearestCent(2 * a - b);
         if (priceHistory.isEmpty()) {
-            priceHistory.add(new Pair(new Date(0), stockPrice));
+            priceHistory.add(new Pair<Date,Integer>(new Date(0), (int)stockPrice));
         } else {
-            priceHistory.add(new Pair(new Date(priceHistory.get(priceHistory.size() - 1).first.getTime() + 7 * 24 * 60 * 60 * 1000), stockPrice));
+            priceHistory.add(new Pair<Date, Integer>(new Date(priceHistory.get(priceHistory.size() - 1).first.getTime() + 7 * 24 * 60 * 60 * 1000), (int)stockPrice));
         }
         return stockPrice;
     }

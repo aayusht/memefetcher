@@ -29,7 +29,7 @@ public class MemeStockMarket {
         for (MemeStock ms : stocks) {
             total += ms.peekCurrValue();
         }
-        totalMarketHist.add(new Pair(stocks.get(0).peekCurrDate(), total));
+        totalMarketHist.add(new Pair<Date,Integer>(stocks.get(0).peekCurrDate(), (int)total));
     }
 
     public void fullUpdate() {
@@ -46,7 +46,7 @@ public class MemeStockMarket {
                 nextWeek = new Date(ms.peekCurrDate().getTime() + 7 * 24 * 60 * 60 * 1000 / stocks.size());
             }
         }
-        totalMarketHist.add(new Pair(nextWeek, total));
+        totalMarketHist.add(new Pair<Date,Integer>(nextWeek, total));
     }
 
     public static void makeGlobal(ArrayList<Meme> allInput) {
