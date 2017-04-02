@@ -18,7 +18,7 @@ public class MemeStock {
 
     public MemeStock(Meme m) {
         base = m;
-        priceHistory = new ArrayList<>();
+        priceHistory = m.getPriceHistory();
         stockPrice = getMarketValue();
     }
 
@@ -57,12 +57,12 @@ public class MemeStock {
         if (base.getRatings().isEmpty()) {
             throw new IllegalArgumentException("No ratings for this meme");
         }
-        double a = base.getRatings().get(base.getRatings().size() - 1).getScore();
+        double a = base.getRatings().get(priceHistory.size()).getScore();
         double b;
         if (priceHistory.size() < 2) {
             b = a;
         } else {
-            b = base.getRatings().get(base.getRatings().size() - 2).getScore();
+            b = base.getRatings().get(priceHistory.size() - 1).getScore();
         }
         double center = (a + b) / 4 + 20;
         a = center + (a - b) / 2;

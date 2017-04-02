@@ -113,8 +113,7 @@ public class MyMemeAcc {
         }
         System.out.println("Our predictor has predicted the following gains/losses for your stocks");
         for (MemeStock ms : diffStocks) {
-            System.out.println("Predicted gain/loss for meme " + ms.getMeme().getName() + ": " + ms.getChange()[0]
-                    + " (" + ms.getChange()[1] + "). ");
+            System.out.println("Predicted value for meme " + ms.getMeme().getName() + ": " + ms.getPredMarketValue());
         }
     }
 
@@ -126,16 +125,19 @@ public class MyMemeAcc {
             a.add(new DatePair(i * 2, new Date(start)));
             start += 7 * 24 * 60 * 60 * 1000;
         }
-        Meme d = new Meme("duck", a, "wow");
+        Meme d = new Meme("duck", a, "wow", new ArrayList<>());
         MemeStock ms = new MemeStock(d);
         ArrayList<MemeStock> f = new ArrayList<>();
-        f.add(ms);
-        MyMemeAcc mma= new MyMemeAcc(new Date(0));
-        mma.accBalance += 5000;
+        System.out.println(ms.getMarketValue());
+        System.out.println(ms.getMarketValue());
+        MyMemeAcc mma= new MyMemeAcc(5000, new Date(0));
         b.add(d);
+        System.out.println(ms.getMarketValue());
         mma.buyPremium();
         MemeStockMarket.makeGlobal(b);
         mma.purchaseStock("duck", 20);
         mma.visualizePremium();
+        System.out.println(mma.checkTotalEquity());
+        System.out.println(mma.checkBalance());
     }
 }
